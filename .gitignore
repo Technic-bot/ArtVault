@@ -1,0 +1,6 @@
+venv/
+backend/__pycache__/
+*.swp
+*.zip
+*.pyc
+
