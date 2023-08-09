@@ -22,3 +22,13 @@ def test_tags(client):
     resp = client.get('/artworks/search?tags=Saria Rose Transformation')
     post_id = resp.json[0]['id']
     assert post_id == 58721673
+
+def test_title_tags(client):
+    resp = client.get('/artworks/search?tags=Color Art&title=Long sweater')
+    post_id = resp.json[0]['id']
+    assert post_id == 85267380
+
+def test_title_tags(client):
+    resp = client.get('/artworks/search?tags=Color Art&filename=mechanicpinupraine')
+    post_id = resp.json[0]['id']
+    assert post_id == 82524223

@@ -11,9 +11,11 @@ def make_dict(row):
     dic_row = { col:row[col] for col in cols}
     return dic_row
 
+# Is there any use case for using both tags and filename, title, description on the same query?
 gen_sql = ( 'SELECT tags.id, title, description, count(tags.id) n, '
             'filename, date FROM patreon '
             'INNER JOIN tags ON patreon.id = tags.id '
+            '{filter} '
             'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
             'GROUP BY tags.id '
             'HAVING n = ? '
@@ -34,14 +36,12 @@ def search_artworks():
                        'message': 'Simultaneous title and filename search not supported'}
         return error_resp, 400
 
+    tags = args.get('tags','')
     if 'title' in args:
-        rows = search_title(args.get('title',''))
-    
-    if 'filename' in args:
-        rows = search_filename(args.get('filename',''))
-
-    if 'tags' in args:
-        tags = args.get('tags','')
+        rows = search_title(args.get('title', ''), tags)
+    elif 'filename' in args:
+        rows = search_filename(args.get('filename', ''), tags)
+    elif 'tags' in args:
         rows = search_by_tag(tags.split())
 
     response = []
@@ -52,39 +52,59 @@ def search_artworks():
 
     return  jsonify(response) 
 
-def search_by_tag(tags):
+def make_tag_query(tags: list[str] ,filt: str):
+    if isinstance(tags,str):
+        tags = [tags]
+
     n = len(tags)
     questions = ','.join('?' * n )
-    format_map = {'questions': questions}
-    nuller = n if tags else ''
-
-    db = get_db()    
+    format_map = {
+        'questions': questions,
+        'filter': filt
+        }
     sql_stmt = gen_sql.format_map(format_map)
     lower_case_tags = list(map(str.lower, tags))
+
+    nuller = n if tags else ''
     queries = [nuller] + lower_case_tags + [n]
+    print(sql_stmt,queries)
+    return sql_stmt, queries
+
+def search_by_tag(tags):
+    sql_stmt, tag_query = make_tag_query(tags,'')
  
-    rows = db.execute(sql_stmt, queries).fetchall()
+    db = get_db()    
+    rows = db.execute(sql_stmt, tag_query).fetchall()
 
     return rows
 
-def search_title(title):
+def search_title(title, tags=''):
     db = get_db()    
-    # Static query with short circuiting 
-    sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                      "(? = null OR title like ?) " )
-    queries = ( title , '%' + title + '%')
- 
-    rows = db.execute(sql_stmt, queries).fetchall()
+    if tags:
+        sql_stmt, tag_query = make_tag_query(tags, "AND  title like ? ")
+        queries = [ '%' + title + '%' ] + tag_query
+        rows = db.execute(sql_stmt, queries).fetchall()
+    else:
+        # Static query with short circuiting 
+        sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
+                          "(? = null OR title like ?) " )
+        queries = ( title , '%' + title + '%')
+        rows = db.execute(sql_stmt, queries).fetchall()
     return rows
 
-def search_filename(filename):
+def search_filename(filename, tags=''):
     db = get_db()    
-    # Static query with short circuiting 
-    sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                      "(? = null OR filename like ?) ")
-    queries = ( filename,'%' + filename + '%' )
- 
-    rows = db.execute(sql_stmt, queries).fetchall()
+    if tags:
+        sql_stmt, tag_query = make_tag_query(tags, "AND filename like ? ")
+        queries = [ '%' + filename + '%' ] + tag_query
+        rows = db.execute(sql_stmt, queries).fetchall()
+    else:
+        # Static query with short circuiting 
+        sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
+                          "(? = null OR filename like ?) ")
+        queries = ( filename,'%' + filename + '%' )
+     
+        rows = db.execute(sql_stmt, queries).fetchall()
     return rows
 
 def search_by_dynamic_query():
