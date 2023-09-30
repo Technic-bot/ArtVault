@@ -67,7 +67,6 @@ def make_tag_query(tags: list[str] ,filt: str):
 
     nuller = n if tags else ''
     queries = [nuller] + lower_case_tags + [n]
-    print(sql_stmt,queries)
     return sql_stmt, queries
 
 def search_by_tag(tags):
