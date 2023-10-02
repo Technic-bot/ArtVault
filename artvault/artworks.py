@@ -19,7 +19,7 @@ gen_sql = ( 'SELECT tags.id, title, description, count(tags.id) n, '
             'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
             'GROUP BY tags.id '
             'HAVING n = ? '
-            'ORDER BY tags.id;')
+            'ORDER BY tags.id DESC;')
 
 
 @bp.route('/search', methods=['GET'])
@@ -37,17 +37,21 @@ def search_artworks():
         return error_resp, 400
 
     tags = args.get('tags','')
-    if 'title' in args:
-        rows = search_title(args.get('title', ''), tags)
-    elif 'filename' in args:
-        rows = search_filename(args.get('filename', ''), tags)
+    title = args.get('title', '')
+    filename = args.get('filename', '')
+    tags = tags.split()
+    if title: 
+        rows = search_title(title, tags)
+    elif filename: 
+        rows = search_filename(filename, tags)
     elif 'tags' in args:
-        rows = search_by_tag(tags.split())
+        rows = search_by_tag(tags)
 
     response = []
     for r in rows:
         r_dic = make_dict(r)    
         r_dic['url'] = current_app.config['VAULT_ROOT'] + r_dic['filename']
+        r_dic['thumbnail'] = current_app.config['THUMB_ROOT'] + r_dic['filename']
         response.append(r_dic)
 
     return  jsonify(response) 
@@ -86,7 +90,7 @@ def search_title(title, tags=''):
     else:
         # Static query with short circuiting 
         sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                          "(? = null OR title like ?) " )
+                          "(? = null OR title like ?) ORDER by id DESC" )
         queries = ( title , '%' + title + '%')
         rows = db.execute(sql_stmt, queries).fetchall()
     return rows
@@ -100,7 +104,7 @@ def search_filename(filename, tags=''):
     else:
         # Static query with short circuiting 
         sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                          "(? = null OR filename like ?) ")
+                          "(? = null OR filename like ?) ORDER by id DESC")
         queries = ( filename,'%' + filename + '%' )
      
         rows = db.execute(sql_stmt, queries).fetchall()

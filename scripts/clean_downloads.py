@@ -8,6 +8,8 @@ import glob
 
 from dataclasses import dataclass, field, asdict
 
+# Program to clean download jsons from patreon downloader fork
+
 @dataclass
 class PatreonPost():
     post_id: int

@@ -11,7 +11,6 @@ def proc_opts():
 
 def get_tags(df):
     tags_df = df['tags'].sort_values() 
-    print(type(tags_df))
 #    tags_df.drop_duplicates(inplace=True)
     return tags_df
 
@@ -24,8 +23,11 @@ if __name__ == "__main__":
     args = proc_opts()
     
     patreon_df = pd.read_json(args.file)
+    print("Dataframe cols")
+    print(patreon_df.columns)
     patreon_df.set_index('post_id',inplace=True)
     print(f"Got {len(patreon_df)} entries in {args.file}")
+    patreon_df.drop('download_url',axis=1, inplace=True)
 
     exploded_df = patreon_df.explode('tags')
     tags = get_tags(exploded_df)

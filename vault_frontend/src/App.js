@@ -23,18 +23,18 @@ function App() {
 
     async function fetchArt(title, tags) {
         try {
+            if (!title && !tags) {
+                return;
+            }
             const baseUrl = '/artworks/search?';
             const params = new URLSearchParams({
                 title: title,
                 tags: tags        
             });
-            console.log(baseUrl + params);
             const response = await fetch(baseUrl + params);
 
             if (response.ok) {
                 const jsonResp = await response.json();
-                // Maybe issue here
-                console.log(jsonResp);
                 setPieces(jsonResp);
             }
         } catch(err) {

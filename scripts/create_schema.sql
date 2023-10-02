@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS "tags"(
 );
 
 .mode csv
-.import data/twokinds_patreon.csv patreon
-.import data/twokinds_patreon_tags.csv tags
+.import data/dev/twokinds_patreon.csv patreon
+.import data/dev/twokinds_patreon_tags.csv tags
