@@ -1,7 +1,8 @@
-import './App.css'
+//import './App.css'
 import Piece from "./components/Piece"; 
 import Controls from "./components/Controls"; 
 import React, {useState} from "react";
+import 'bulma/css/bulma.min.css';
 
 function App() {
     const dummy_json = 
@@ -49,18 +50,29 @@ function App() {
             id={piece.id}
             title={piece.title}
             url={piece.url}
+            thumbnail={piece.thumbnail}
         />
     ));
     return (
         <div className="App">
-                <h1> Twokinds ArtVault </h1>
-                <Controls fetchFunc={fetchArt} setFunc={setPieces} />
-                <div class="results-pane">
-                        <h2>Results</h2>
-                        <div id="resultsContainer">
-                            {pieceList}
-                        </div>
+            <div class='columns is-centered'>
+                <div class='column is-half'>
+                    <h1 class="title is-1 has-text-centered 
+                        has-background-light"> Twokinds ArtVault </h1>
+                    <Controls fetchFunc={fetchArt} setFunc={setPieces} />
                 </div>
+            </div>
+
+            <div class="columns is-centered results-pane">
+                <div class='column is-half'>
+                    <h2 class='subtitle is-2'>Results</h2>
+                </div>
+            </div>
+            <div class="columns is-multiline is-centered results-pane">
+                <div class='column is-two-thirds has-text-centered'>
+                    {pieceList}
+                </div>
+            </div>
                 
         </div>
     );

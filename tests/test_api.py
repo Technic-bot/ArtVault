@@ -19,7 +19,7 @@ def test_filename_search(client):
     assert post_id == 81944980
 
 def test_tags(client):
-    resp = client.get('/artworks/search?tags=Saria Rose Transformation')
+    resp = client.get('/artworks/search?tags=Saria,Rose,Transformation')
     post_id = resp.json[0]['id']
     assert post_id == 86294042
 
@@ -29,6 +29,21 @@ def test_title_tags(client):
     assert post_id == 85267380
 
 def test_title_tags(client):
-    resp = client.get('/artworks/search?tags=Color&filename=mechanicpinupraine')
+    resp = client.get('/artworks/search?tags=Color Art&filename=mechanicpinupraine')
     post_id = resp.json[0]['id']
     assert post_id == 82524223
+
+def test_empty_tags_with_filename(client):
+    resp = client.get('/artworks/search?tags=&filename=mechanicpinupraine')
+    post_id = resp.json[1]['id']
+    assert post_id == 81944980
+
+def test_empty_filename_with_tags(client):
+    resp = client.get('/artworks/search?title=&tags=Saria,Rose,Transformation')
+    post_id = resp.json[0]['id']
+    assert post_id == 86294042
+
+def test_redundant_file_with_tags(client):
+    resp = client.get('/artworks/search?title=Portrait&tags=Saria,Rose,Transformation')
+    post_id = resp.json[0]['id']
+    assert post_id == 86294042

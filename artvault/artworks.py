@@ -36,15 +36,16 @@ def search_artworks():
                        'message': 'Simultaneous title and filename search not supported'}
         return error_resp, 400
 
-    tags = args.get('tags','')
+    tags = args.get('tags',None)
+    if tags:
+       tags = tags.split(',')
     title = args.get('title', '')
     filename = args.get('filename', '')
-    tags = tags.split()
     if title: 
         rows = search_title(title, tags)
     elif filename: 
         rows = search_filename(filename, tags)
-    elif 'tags' in args:
+    elif tags: 
         rows = search_by_tag(tags)
 
     response = []

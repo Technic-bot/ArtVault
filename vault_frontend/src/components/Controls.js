@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 
 export default function Controls(props) {
-    const [title, setTitle] = useState()
-    const [tags, setTags] = useState()
+    const [title, setTitle] = useState('')
+    const [tags, setTags] = useState('')
     
     function handleSubmit(e) {
         e.preventDefault();
@@ -18,23 +18,29 @@ export default function Controls(props) {
     return (
         <div class="input-pane">
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label> Title
-                        <input type="text" id="titleQuery"
+                <div class='field'>
+                    <label class='label is-medium'> Title </label>
+                    <div class='control'>
+                        <input class='input is-primary'
+                         type="text" id="titleQuery"
                          placeholder="Search by title..."
                          value={title}
                          onChange = {handleTitleChange}/>
-                    </label>
+                    </div>
                 </div>
-                <div>
-                    <label> Tags
-                        <input type="text" id="tagQuery" 
+                <div class='field'>
+                    <label class='label is-medium'> Tags </label>
+                    <div class='control'>
+                        <input class='input is-primary' 
+                         type="text" id="tagQuery" 
                          placeholder="Search by tags..."
                          value = {tags}
                          onChange = {handleTagsChange}/>
-                    </label>
+                    </div>
                 </div>
-                <button id="submitBtn">Query</button>
+                <div class='field'>
+                    <button class='button is-primary' id="submitBtn">Query</button>
+                </div>
             </form>
         </div>
     )
