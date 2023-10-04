@@ -56,7 +56,7 @@ function App() {
     return (
         <div className="App">
             <div class='columns is-centered'>
-                <div class='column is-half'>
+                <div class='column is-two-thirds'>
                     <h1 class="title is-1 has-text-centered 
                         has-background-light"> Twokinds ArtVault </h1>
                     <Controls fetchFunc={fetchArt} setFunc={setPieces} />
@@ -68,9 +68,11 @@ function App() {
                     <h2 class='subtitle is-2'>Results</h2>
                 </div>
             </div>
-            <div class="columns is-multiline is-centered results-pane">
-                <div class='column is-two-thirds has-text-centered'>
-                    {pieceList}
+            <div class="columns is-centered">
+                <div class="column is-two-thirds">
+                    <div class="columns is-multiline is-centered">
+                        {pieceList}
+                    </div>
                 </div>
             </div>
                 
