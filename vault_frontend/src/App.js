@@ -51,6 +51,7 @@ function App() {
             title={piece.title}
             url={piece.url}
             thumbnail={piece.thumbnail}
+            patreon_url={piece.patreon_url}
         />
     ));
     return (

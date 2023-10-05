@@ -7,13 +7,13 @@ from artvault.db import get_db
 bp = Blueprint('artworks', __name__, url_prefix='/artworks')
 
 def make_dict(row):
-    cols = ['id','title','description','filename','date']
+    cols = ['id','title','description','filename','date', 'patreon_url']
     dic_row = { col:row[col] for col in cols}
     return dic_row
 
 # Is there any use case for using both tags and filename, title, description on the same query?
 gen_sql = ( 'SELECT tags.id, title, description, count(tags.id) n, '
-            'filename, date FROM patreon '
+            'filename, date, patreon_url FROM patreon '
             'INNER JOIN tags ON patreon.id = tags.id '
             '{filter} '
             'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
@@ -90,8 +90,9 @@ def search_title(title, tags=''):
         rows = db.execute(sql_stmt, queries).fetchall()
     else:
         # Static query with short circuiting 
-        sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                          "(? = null OR title like ?) ORDER by id DESC" )
+        sql_stmt = ("SELECT id, title, description, filename, date, patreon_url"
+                    " FROM patreon WHERE " 
+                    "(? = null OR title like ?) ORDER by id DESC" )
         queries = ( title , '%' + title + '%')
         rows = db.execute(sql_stmt, queries).fetchall()
     return rows
@@ -104,8 +105,9 @@ def search_filename(filename, tags=''):
         rows = db.execute(sql_stmt, queries).fetchall()
     else:
         # Static query with short circuiting 
-        sql_stmt = ("SELECT id, title, description, filename, date FROM patreon WHERE " 
-                          "(? = null OR filename like ?) ORDER by id DESC")
+        sql_stmt = ("SELECT id, title, description, filename, date, patreon_url"
+                    " FROM patreon WHERE " 
+                    "(? = null OR filename like ?) ORDER by id DESC")
         queries = ( filename,'%' + filename + '%' )
      
         rows = db.execute(sql_stmt, queries).fetchall()
