@@ -3,7 +3,6 @@ backend/__pycache__/
 *.swp
 *.zip
 *.pyc
-instance/
 
 # dependencies
 vault_frontend/node_modules
