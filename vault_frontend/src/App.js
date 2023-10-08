@@ -1,7 +1,7 @@
 //import './App.css'
 import Piece from "./components/Piece"; 
 import Controls from "./components/Controls"; 
-import React, {useState} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import 'bulma/css/bulma.min.css';
 
 function App() {
@@ -16,11 +16,19 @@ function App() {
                         id:89698722, 
                         title: "Bad lifehacks",
                         url: 'lifehacks.png'             
-                }
+                },
+                { 
+                        id:896987223, 
+                        title: "Raine Fics",
+                        url: 'raineficx.png'             
+                },
+
                 
         ];
         
-    const [pieces, setPieces] = useState(dummy_json);
+    const [renderedPieces, setRenderedPieces] = useState(10);
+    const [pieces, setPieces] = useState([]);
+    const observerTarget = useRef(null)
 
     async function fetchArt(title, tags) {
         try {
@@ -37,6 +45,8 @@ function App() {
             if (response.ok) {
                 const jsonResp = await response.json();
                 setPieces(jsonResp);
+                setRenderedPieces(10);
+                console.log("Got from query: " + jsonResp.length );
             }
         } catch(err) {
             console.log(err)
@@ -44,8 +54,38 @@ function App() {
 
     }
         
+    function createObserver() {
+        let observer;
 
-    const pieceList = pieces.map((piece) => (
+        let options = {
+            threshold: 1
+        };
+
+        observer = new IntersectionObserver(handleIntersect, options);
+        if (observerTarget.current ) {
+            observer.observe(observerTarget.current)
+        }
+
+        return () => {
+            if (observerTarget.current) {
+                observer.unobserve(observerTarget.current);
+            }
+        }
+    }
+
+    function handleIntersect(entries, observer) {
+        if (entries[0].isIntersecting) {
+            setRenderedPieces( pcs => pcs + 10 );
+        }
+    }
+
+    useEffect(createObserver, [observerTarget]); 
+    useEffect(() => {
+            console.log("Modified  rendered to: " + renderedPieces)
+            },
+            [renderedPieces]);
+
+    const pieceList = pieces.slice(0, renderedPieces).map((piece) => (
         <Piece
             id={piece.id}
             title={piece.title}
@@ -56,23 +96,24 @@ function App() {
     ));
     return (
         <div className="App">
-            <div class='columns is-centered'>
-                <div class='column is-two-thirds'>
-                    <h1 class="title is-1 has-text-centered 
+            <div className='columns is-centered'>
+                <div className='column is-two-thirds'>
+                    <h1 className="title is-1 has-text-centered 
                         has-background-light"> Twokinds ArtVault </h1>
                     <Controls fetchFunc={fetchArt} setFunc={setPieces} />
                 </div>
             </div>
 
-            <div class="columns is-centered results-pane">
-                <div class='column is-half'>
-                    <h2 class='subtitle is-2'>Results</h2>
+            <div className="columns is-centered results-pane">
+                <div className='column is-half'>
+                    <h2 className='subtitle is-2'>Results</h2>
                 </div>
             </div>
-            <div class="columns is-centered">
-                <div class="column is-two-thirds">
-                    <div class="columns is-multiline is-centered">
+            <div className="columns is-centered">
+                <div className="column is-two-thirds">
+                    <div className="columns is-multiline is-centered">
                         {pieceList}
+                        <div ref={observerTarget}></div>
                     </div>
                 </div>
             </div>
