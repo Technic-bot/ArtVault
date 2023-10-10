@@ -19,7 +19,7 @@ def test_filename_search(client):
     assert post_id == 81944980
 
 def test_tags(client):
-    resp = client.get('/artworks/search?tags=Saria,Rose,Transformation')
+    resp = client.get('/artworks/search?tags=Saria, Rose,Transformation')
     post_id = resp.json[0]['id']
     assert post_id == 86294042
 
@@ -47,3 +47,4 @@ def test_redundant_file_with_tags(client):
     resp = client.get('/artworks/search?title=Portrait&tags=Saria,Rose,Transformation')
     post_id = resp.json[0]['id']
     assert post_id == 86294042
+

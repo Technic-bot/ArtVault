@@ -39,6 +39,8 @@ def search_artworks():
     tags = args.get('tags',None)
     if tags:
        tags = tags.split(',')
+       tags = [t.strip() for t in tags]
+
     title = args.get('title', '')
     filename = args.get('filename', '')
     if title: 
