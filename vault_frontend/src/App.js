@@ -5,30 +5,11 @@ import React, {useState, useRef, useEffect} from "react";
 import 'bulma/css/bulma.min.css';
 
 function App() {
-    const dummy_json = 
-        [ 
-                { 
-                        id:89896118, 
-                        title: "Reni's Reliquary",
-                        url: 'renismagichorde.png'             
-                },
-                { 
-                        id:89698722, 
-                        title: "Bad lifehacks",
-                        url: 'lifehacks.png'             
-                },
-                { 
-                        id:896987223, 
-                        title: "Raine Fics",
-                        url: 'raineficx.png'             
-                },
-
-                
-        ];
-        
     const [renderedPieces, setRenderedPieces] = useState(10);
     const [pieces, setPieces] = useState([]);
     const observerTarget = useRef(null)
+    const piecesRef = useRef(null)
+    piecesRef.current = pieces;
 
     async function fetchArt(title, tags) {
         try {
@@ -45,8 +26,8 @@ function App() {
             if (response.ok) {
                 const jsonResp = await response.json();
                 setPieces(jsonResp);
-                setRenderedPieces(10);
-                console.log("Got from query: " + jsonResp.length );
+                setRenderedPieces(8);
+                //console.log("Got from query: " + jsonResp.length );
             }
         } catch(err) {
             console.log(err)
@@ -75,15 +56,16 @@ function App() {
 
     function handleIntersect(entries, observer) {
         if (entries[0].isIntersecting) {
-            setRenderedPieces( pcs => pcs + 10 );
+            if (piecesRef.current.length > renderedPieces) {
+                setRenderedPieces( pcs => pcs + 10 );
+                // console.log("Rendering " + renderedPieces +" from " + piecesRef.current.length);
+            }
         }
     }
 
     useEffect(createObserver, [observerTarget]); 
-    useEffect(() => {
-            console.log("Modified  rendered to: " + renderedPieces)
-            },
-            [renderedPieces]);
+    const allDone = pieces.length && (renderedPieces >= pieces.length);
+    //console.log("Rendering " + renderedPieces +" from " + piecesRef.current.length);
 
     const pieceList = pieces.slice(0, renderedPieces).map((piece) => (
         <Piece
@@ -94,6 +76,11 @@ function App() {
             patreon_url={piece.patreon_url}
         />
     ));
+
+    let resultSentence = '';
+    if (pieces.length) {
+        resultSentence = "Got " + pieces.length + " artworks";
+    }
     return (
         <div className="App">
             <div className='columns is-centered'>
@@ -106,7 +93,7 @@ function App() {
 
             <div className="columns is-centered results-pane">
                 <div className='column is-half'>
-                    <h2 className='subtitle is-2'>Results</h2>
+                    <h2 className='subtitle is-2'>Results: {resultSentence}</h2>
                 </div>
             </div>
             <div className="columns is-centered">
@@ -117,6 +104,14 @@ function App() {
                     </div>
                 </div>
             </div>
+            {allDone &&
+               <div className="columns is-centered"> 
+                   <div className='box is-1 column is-one-quarter
+                        has-text-centered '>
+                        <h1 className='subtitle is-3'> All Art Fetched </h1>
+                    </div>
+               </div>
+            }
                 
         </div>
     );
