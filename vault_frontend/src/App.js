@@ -80,21 +80,29 @@ function App() {
     let resultSentence = '';
     if (pieces.length) {
         resultSentence = "Got " + pieces.length + " artworks";
+    } else {
+        resultSentence = "";
     }
+
     return (
-        <div className="App">
+        <div className="App mx-1">
             <div className='columns is-centered'>
-                <div className='column is-two-thirds'>
-                    <h1 className="title is-1 has-text-centered 
-                        has-background-light"> Twokinds ArtVault </h1>
+                <div className='box column is-two-thirds'>
+                    <div className='box has-background-light'>
+                        <h1 className="title is-1 has-text-centered">
+                         Twokinds ArtVault 
+                         </h1>
+                    </div>
                     <Controls fetchFunc={fetchArt} setFunc={setPieces} />
                 </div>
             </div>
 
             <div className="columns is-centered results-pane">
+                { resultSentence &&
                 <div className='column is-half'>
-                    <h2 className='subtitle is-2'>Results: {resultSentence}</h2>
+                    <h2 className='box subtitle is-2'>Results: {resultSentence}</h2>
                 </div>
+                }
             </div>
             <div className="columns is-centered">
                 <div className="column is-two-thirds">
