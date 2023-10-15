@@ -48,3 +48,13 @@ def test_redundant_file_with_tags(client):
     post_id = resp.json[0]['id']
     assert post_id == 86294042
 
+def test_latest_arts(client):
+    default_limit = 30
+    resp = client.get('/artworks/latest')
+    n_resps = len(resp.json)
+    assert n_resps == default_limit
+
+def test_latest_arts_custom_limit(client):
+    resp = client.get('/artworks/latest?limit=12')
+    n_resps = len(resp.json)
+    assert n_resps == 12
