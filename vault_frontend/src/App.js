@@ -15,15 +15,15 @@ function App() {
 
     async function fetchArt(title, tags) {
         try {
+            const endpoint = '/artworks/search?';
             if (!title && !tags) {
                 return;
             }
-            const baseUrl = '/artworks/search?';
             const params = new URLSearchParams({
                 title: title,
                 tags: tags        
             });
-            const response = await fetch(baseUrl + params);
+            const response = await fetch(endpoint + params);
 
             if (response.ok) {
                 const jsonResp = await response.json();
@@ -36,6 +36,28 @@ function App() {
         }
 
     }
+    
+    async function fetchLatestArt( limit) {
+        try {
+            const endpoint = '/artworks/latest?';
+            const params = new URLSearchParams({
+                limit: limit
+            });
+            const response = await fetch(endpoint + params);
+
+            if (response.ok) {
+                const jsonResp = await response.json();
+                setPieces(jsonResp);
+                setRenderedPieces(10);
+            }
+        } catch(err) {
+            console.log(err)
+        }
+
+    }
+    useEffect(() => {
+        fetchLatestArt(32);        
+    }, []);
         
     function createObserver() {
         let observer;

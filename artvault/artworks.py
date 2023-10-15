@@ -31,7 +31,7 @@ def get_latest_artworks(limit):
     db = get_db()
     sql_stmt = ('SELECT id, title, description, '
                 'filename, date, patreon_url FROM patreon '
-                'ORDER BY id LIMIT ?;')
+                'ORDER BY id DESC LIMIT ?;')
     rows = db.execute(sql_stmt, (limit, )).fetchall()
     return rows
 
