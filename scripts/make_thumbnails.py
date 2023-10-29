@@ -53,6 +53,9 @@ class ImgResizer():
             except ValueError as e:
                 print(e)
                 print(f'Error saving {out_path}')
+            except PIL.UnidentifiedImageError as e:
+                print(e)
+                print(f'Error saving {out_path}')
         return
 
 if __name__=="__main__":
