@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 def proc_opts():
     parser = argparse.ArgumentParser(
@@ -43,17 +43,17 @@ class ImgResizer():
             if not os.path.isfile(input_path):
                 print(f'{input_path} not and image')
                 continue
-            img = Image.open(input_path)
-            img.thumbnail([300,300])
-            out_path = self.out_dir + img_file
             try:
+                img = Image.open(input_path)
+                img.thumbnail([300,300])
+                out_path = self.out_dir + img_file
                 proccessed_imgs += 1
                 print(f'Saving {self.out_dir + img_file}')
                 img.save(out_path)
             except ValueError as e:
                 print(e)
                 print(f'Error saving {out_path}')
-            except PIL.UnidentifiedImageError as e:
+            except UnidentifiedImageError as e:
                 print(e)
                 print(f'Error saving {out_path}')
         return
