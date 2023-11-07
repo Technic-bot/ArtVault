@@ -101,15 +101,19 @@ You can modify `instance/instance_config.py` to point to your actual image
 storage location. Default is my dev PC internal ip but you can change it to your
 website URL, or even point it to some object storage solution. 
 
-You need to provide the actual file location and thumnail URI is also provided.
+You need to provide the actual file location and also make sure a thumbnail URI
+is also provided.
 As gallery previews the artworks via the thumbnails and full sized images are
 only served once user clicks on any link.
 
-You can provide the images in any way you like, another advantage of separating 
+You can load the images in any way you like, another advantage of separating 
 the images storage from the app. But if you want to automatically get them from 
 patreon and fill the database with the appropiate data you can use this project
 sister repo
 [PyPatreonHarvester](https://github.com/Technic-bot/PyPatreonHaverster)
 
+## Database schema
+
+Pending
 
 
