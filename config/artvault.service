@@ -1,0 +1,19 @@
+# Copy to /etc/systemd/system/
+[Unit]
+Description=Gunicorn instance to serve ArtVault
+After=network.target
+
+[Service]
+User=vaultuser
+Group=nginx
+WorkingDirectory=/home/vaultuser/ArtVault
+Environment="PATH=/home/vaultuser/ArtVault/vaultenv/bin"
+ExecStart=/home/vaultuser/ArtVault/vaultenv/bin/gunicorn --access-logfile /home/vaultuser/ArtVault/gun.log --workers 3 --bind unix:/home/vaultuser/ArtVault/vault.sock -m 777 'wsgi:create_app()'
+
+#ExecStart=/bin/bash -c "source /home/vaultuser/codex/codexenv/bin/activate; /home/vaultuser/codex/codexenv/bin/gunicorn --workers 3 --bind unix:/home/vaultuser/codex/codex.sock -m 777 wsgi:app"
+
+[Install]
+WantedBy=multi-user.target
+
+
+
