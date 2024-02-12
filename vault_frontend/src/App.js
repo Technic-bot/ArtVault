@@ -143,8 +143,10 @@ function App() {
                 </div>
             </div>
             <div className="columns is-centered" ref={observerTarget}>
-               <div className='box is-1 column is-one-quarter has-text-centered '>
-                </div>
+		<div className='box is-1 column is-one-quarter has-text-centered '>
+		    <button onClick={handleIntersect} className="button is-primary"
+			    id="loadBtn" disabled={allDone}> Load More </button>
+               </div>
             </div>
             {endMsg}
                 
