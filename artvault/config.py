@@ -1,1 +1,1 @@
-DB_NAME='twokinds_patreon.db'
+DB_NAME='twokinds_patreon_dev.db'

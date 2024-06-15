@@ -8,6 +8,8 @@ bp = Blueprint('artworks', __name__, url_prefix='/artworks')
 
 # Is there any use case for using both tags
 #  and filename, title, description on the same query?
+
+# Filter has an AND clause valid after inner join
 gen_sql = ('SELECT tags.id, title, description, count(tags.id) n, '
            'filename, date, patreon_url FROM patreon '
            'INNER JOIN tags ON patreon.id = tags.id '
@@ -15,7 +17,7 @@ gen_sql = ('SELECT tags.id, title, description, count(tags.id) n, '
            'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
            'GROUP BY tags.id '
            'HAVING n = ? '
-           'ORDER BY tags.id DESC;')
+           'ORDER BY patreon.date DESC;')
 
 
 @bp.route('/latest', methods=['GET'])
@@ -31,7 +33,7 @@ def get_latest_artworks(limit):
     db = get_db()
     sql_stmt = ('SELECT id, title, description, '
                 'filename, date, patreon_url FROM patreon '
-                'ORDER BY id DESC LIMIT ?;')
+                'ORDER BY date DESC LIMIT ?;')
     rows = db.execute(sql_stmt, (limit, )).fetchall()
     return rows
 
@@ -80,6 +82,7 @@ def build_response(rows):
                 current_app.config['THUMB_ROOT']
                 + r_dic['filename']
                 )
+        r_dic['date'] = r_dic['date'].split('T')[0]
         response.append(r_dic)
 
     return jsonify(response)
@@ -91,24 +94,6 @@ def make_dict(row):
     return dic_row
 
 
-def make_tag_query(tags: list[str], filt: str):
-    if isinstance(tags, str):
-        tags = [tags]
-
-    n = len(tags)
-    questions = ','.join('?' * n)
-    format_map = {
-        'questions': questions,
-        'filter': filt
-        }
-    sql_stmt = gen_sql.format_map(format_map)
-    lower_case_tags = list(map(str.lower, tags))
-
-    nuller = n if tags else ''
-    queries = [nuller] + lower_case_tags + [n]
-    return sql_stmt, queries
-
-
 def search_by_tag(tags):
     sql_stmt, tag_query = make_tag_query(tags, '')
 
@@ -116,6 +101,26 @@ def search_by_tag(tags):
     rows = db.execute(sql_stmt, tag_query).fetchall()
 
     return rows
+
+
+def make_tag_query(tags: list[str], filt: str):
+    if isinstance(tags, str):
+        tags = [tags]
+
+    # Add ? to prepared statement
+    n_tags = len(tags)
+    questions = ','.join('?' * n_tags)
+    format_map = {
+        'questions': questions,
+        'filter': filt
+        }
+    sql_stmt = gen_sql.format_map(format_map)
+    
+    # Make queries for prepared statement
+    lower_case_tags = [x.lower() for x in tags]
+    nuller = n_tags if tags else ''
+    queries = [nuller] + lower_case_tags + [n_tags]
+    return sql_stmt, queries
 
 
 def search_title(title, tags=''):
@@ -129,7 +134,7 @@ def search_title(title, tags=''):
         sql_stmt = ("SELECT id, title, description, "
                     "filename, date, patreon_url "
                     "FROM patreon WHERE "
-                    "(? = null OR title like ?) ORDER by id DESC")
+                    "(? = null OR title like ?) ORDER by date DESC")
         queries = (title, '%' + title + '%')
         rows = db.execute(sql_stmt, queries).fetchall()
     return rows
@@ -146,7 +151,7 @@ def search_filename(filename, tags=''):
         sql_stmt = ("SELECT id, title, description, "
                     "filename, date, patreon_url "
                     "FROM patreon WHERE "
-                    "(? = null OR filename like ?) ORDER by id DESC")
+                    "(? = null OR filename like ?) ORDER by date DESC")
         queries = (filename, '%' + filename + '%')
 
         rows = db.execute(sql_stmt, queries).fetchall()
