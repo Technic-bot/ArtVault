@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def test_empty(client):
     """Test and empty query """
     resp = client.get('/artworks/search')
@@ -12,6 +14,22 @@ def test_title_search(client):
     resp = client.get('/artworks/search?title=Pinup Raine')
     post_id = resp.json[1]['id']
     assert post_id == 81944980
+
+def test_title_search_desc(client):
+    resp = client.get('/artworks/search?title=Pinup Raine&sorting=desc')
+    post_1_date = resp.json[0]['date']
+    date_1 = datetime.strptime(post_1_date, '%Y-%m-%d')
+    post_2_date = resp.json[1]['date']
+    date_2 = datetime.strptime(post_2_date, '%Y-%m-%d')
+    assert date_2 < date_1
+
+def test_title_search_asc(client):
+    resp = client.get('/artworks/search?title=Pinup Raine&sorting=asc')
+    post_1_date = resp.json[0]['date']
+    date_1 = datetime.strptime(post_1_date, '%Y-%m-%d')
+    post_2_date = resp.json[1]['date']
+    date_2 = datetime.strptime(post_2_date, '%Y-%m-%d')
+    assert date_2 > date_1
 
 def test_filename_search(client):
     resp = client.get('/artworks/search?filename=mechanicpinupraine')
@@ -32,6 +50,14 @@ def test_title_tags(client):
     resp = client.get('/artworks/search?tags=Color Art&filename=mechanicpinupraine')
     post_id = resp.json[0]['id']
     assert post_id == 82524223
+
+def test_title_tags_asc(client):
+    resp = client.get('/artworks/search?title=&tags=Saria,Rose,Transformation&sorting=asc')
+    post_1_date = resp.json[0]['date']
+    date_1 = datetime.strptime(post_1_date, '%Y-%m-%d')
+    post_2_date = resp.json[1]['date']
+    date_2 = datetime.strptime(post_2_date, '%Y-%m-%d')
+    assert date_2 > date_1
 
 def test_empty_tags_with_filename(client):
     resp = client.get('/artworks/search?tags=&filename=mechanicpinupraine')

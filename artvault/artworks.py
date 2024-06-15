@@ -17,7 +17,8 @@ gen_sql = ('SELECT tags.id, title, description, count(tags.id) n, '
            'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
            'GROUP BY tags.id '
            'HAVING n = ? '
-           'ORDER BY patreon.date DESC;')
+           'ORDER BY patreon.date '
+           '{order}')
 
 
 @bp.route('/latest', methods=['GET'])
@@ -59,12 +60,13 @@ def search_artworks():
 
     title = args.get('title', '')
     filename = args.get('filename', '')
+    sorting = args.get('sorting', 'desc')
     if title:
-        rows = search_title(title, tags)
+        rows = search_title(title, tags, sorting)
     elif filename:
-        rows = search_filename(filename, tags)
+        rows = search_filename(filename, tags, sorting)
     elif tags:
-        rows = search_by_tag(tags)
+        rows = search_by_tag(tags, sorting)
 
     response = build_response(rows)
     return response
@@ -94,8 +96,8 @@ def make_dict(row):
     return dic_row
 
 
-def search_by_tag(tags):
-    sql_stmt, tag_query = make_tag_query(tags, '')
+def search_by_tag(tags, sort_order='desc'):
+    sql_stmt, tag_query = make_tag_query(tags, '', sort_order)
 
     db = get_db()
     rows = db.execute(sql_stmt, tag_query).fetchall()
@@ -103,7 +105,7 @@ def search_by_tag(tags):
     return rows
 
 
-def make_tag_query(tags: list[str], filt: str):
+def make_tag_query(tags: list[str], filt: str, sort_order: str = 'desc'):
     if isinstance(tags, str):
         tags = [tags]
 
@@ -112,7 +114,8 @@ def make_tag_query(tags: list[str], filt: str):
     questions = ','.join('?' * n_tags)
     format_map = {
         'questions': questions,
-        'filter': filt
+        'filter': filt,
+        'order': sort_order
         }
     sql_stmt = gen_sql.format_map(format_map)
     
@@ -123,10 +126,10 @@ def make_tag_query(tags: list[str], filt: str):
     return sql_stmt, queries
 
 
-def search_title(title, tags=''):
+def search_title(title, tags='', sort_order='desc'):
     db = get_db()
     if tags:
-        sql_stmt, tag_query = make_tag_query(tags, "AND  title like ? ")
+        sql_stmt, tag_query = make_tag_query(tags, "AND  title like ? ", sort_order)
         queries = ['%' + title + '%'] + tag_query
         rows = db.execute(sql_stmt, queries).fetchall()
     else:
@@ -134,24 +137,27 @@ def search_title(title, tags=''):
         sql_stmt = ("SELECT id, title, description, "
                     "filename, date, patreon_url "
                     "FROM patreon WHERE "
-                    "(? = null OR title like ?) ORDER by date DESC")
+                    "(? = null OR title like ?) "
+                    f" ORDER by date {sort_order}")
         queries = (title, '%' + title + '%')
         rows = db.execute(sql_stmt, queries).fetchall()
     return rows
 
 
-def search_filename(filename, tags=''):
+def search_filename(filename, tags='', sort_order='desc'):
     db = get_db()
     if tags:
-        sql_stmt, tag_query = make_tag_query(tags, "AND filename like ? ")
-        queries = ['%' + filename + '%'] + tag_query
+        sql_stmt, tag_query = make_tag_query(tags, "AND filename like ? ", sort_order)
+        queries = ['%' + filename + '%'] + tag_query 
+        print(sql_stmt)
         rows = db.execute(sql_stmt, queries).fetchall()
     else:
         # Static query with short circuiting
         sql_stmt = ("SELECT id, title, description, "
                     "filename, date, patreon_url "
                     "FROM patreon WHERE "
-                    "(? = null OR filename like ?) ORDER by date DESC")
+                    "(? = null OR filename like ?) "
+                    f" ORDER by date {sort_order}")
         queries = (filename, '%' + filename + '%')
 
         rows = db.execute(sql_stmt, queries).fetchall()

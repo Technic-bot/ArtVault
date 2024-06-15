@@ -3,6 +3,7 @@ import React, {useState} from "react";
 export default function Controls(props) {
     const [title, setTitle] = useState('')
     const [tags, setTags] = useState('')
+    const [sort, setSort] = useState('')
     
     function handleSubmit(e) {
         e.preventDefault();
@@ -13,6 +14,9 @@ export default function Controls(props) {
     }
     function handleTitleChange(e) {
         setTitle(e.target.value);
+    }
+    function handleSortChange(e) {
+        setSort(e.target.value);
     }
 
     return (
@@ -39,6 +43,15 @@ export default function Controls(props) {
                     </div>
                 </div>
                 <div className='field'>
+                    <label className='label is-normal'> Sort By </label>
+                    <div className='select'>
+                        <select className='control' onChange = {handleSortChange}>
+                            <option value='date_desc'>Date Descending</option>
+                            <option value='date_asc'>Date Ascending</option>
+                        </select>
+                    </div>
+                </div>
+                <div className='control'>
                     <button className='button is-primary' id="submitBtn">Query</button>
                 </div>
             </form>
