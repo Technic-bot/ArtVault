@@ -13,15 +13,23 @@ function App() {
     piecesRef.current = pieces;
     renderedRef.current = renderedPieces;
 
-    async function fetchArt(title, tags) {
+    async function fetchArt(title, tags, sorting) {
         try {
+            var sort_order;
+            if (sorting == 'date_asc') {
+                sort_order = 'asc';
+            } else {
+                sort_order = 'desc';
+            }
+
             const endpoint = '/artworks/search?';
             if (!title && !tags) {
                 return;
             }
             const params = new URLSearchParams({
                 title: title,
-                tags: tags        
+                tags: tags,
+                sorting: sort_order
             });
             const response = await fetch(endpoint + params);
 
@@ -105,6 +113,7 @@ function App() {
             url={piece.url}
             thumbnail={piece.thumbnail}
             patreon_url={piece.patreon_url}
+            date={piece.date}
         />
     ));
 

@@ -5,6 +5,7 @@ export default function Piece(props) {
     return (
         <div className='column is-one-quarter box has-background-lighti has-text-centered' >
             <p className='title' > {props.title} </p>
+            <p className='subtitle' > Published @ {props.date} </p>
             <figure className='is-inline-block'>
                 <a href={props.url}>
                     <img src={props.thumbnail} alt={props.thumbnail} />

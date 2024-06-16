@@ -7,7 +7,7 @@ export default function Controls(props) {
     
     function handleSubmit(e) {
         e.preventDefault();
-        props.fetchFunc(title, tags);
+        props.fetchFunc(title, tags, sort);
     }
     function handleTagsChange(e) {
         setTags(e.target.value);
