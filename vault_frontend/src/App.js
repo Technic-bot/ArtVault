@@ -126,8 +126,18 @@ function App() {
 
     return (
         <div className="App mx-1">
+            <div className="columns is-centered">
+                <div className="box column is-10">
+                    <nav className="navbar">
+                        <a className="navbar-item" 
+                            href="https://github.com/Technic-bot/ArtVault">Github</a>
+                        <a className="navbar-item" href="./about">About</a>
+                    </nav>
+                </div>
+            </div>
+
             <div className='columns is-centered'>
-                <div className='box column is-two-thirds'>
+                <div className='box column is-10'>
                     <div className='box has-background-light'>
                         <h1 className="title is-1 has-text-centered">
                          Twokinds ArtVault 
@@ -144,6 +154,7 @@ function App() {
                 </div>
                 }
             </div>
+
             <div className="columns is-centered">
                 <div className="column is-two-thirds">
                     <div className="columns is-multiline is-centered">
@@ -151,10 +162,11 @@ function App() {
                     </div>
                 </div>
             </div>
+
             <div className="columns is-centered" ref={observerTarget}>
-		<div className='box is-1 column is-one-quarter has-text-centered '>
-		    <button onClick={handleIntersect} className="button is-primary"
-			    id="loadBtn" disabled={allDone}> Load More </button>
+                <div className='box is-1 column is-one-quarter has-text-centered '>
+                    <button onClick={handleIntersect} className="button is-primary"
+                        id="loadBtn" disabled={allDone}> Load More </button>
                </div>
             </div>
             {endMsg}
