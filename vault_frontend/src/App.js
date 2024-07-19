@@ -16,7 +16,7 @@ function App() {
     async function fetchArt(title, tags, sorting) {
         try {
             var sort_order;
-            if (sorting == 'date_asc') {
+            if (sorting === 'date_asc') {
                 sort_order = 'asc';
             } else {
                 sort_order = 'desc';
@@ -35,6 +35,8 @@ function App() {
 
             if (response.ok) {
                 const jsonResp = await response.json();
+                const newUrl = '?' + params.toString();
+                window.history.pushState( {path: newUrl},'', newUrl);
                 setPieces(jsonResp);
                 setRenderedPieces(10);
                 //console.log("Got from query: " + jsonResp.length );
@@ -45,7 +47,7 @@ function App() {
 
     }
     
-    async function fetchLatestArt( limit) {
+    async function fetchLatestArt(limit) {
         try {
             const endpoint = '/artworks/latest?';
             const params = new URLSearchParams({
@@ -63,8 +65,27 @@ function App() {
         }
 
     }
+
+    async function fetchOnLoad() {
+        const urlSearchString = window.location.search;
+        const params = new URLSearchParams(urlSearchString);
+
+        if( params.size>0 ) {
+            console.log(params);
+            if (params.has('tags')) {
+             await fetchArt(params.get('title'), params.get('tags'));
+            } else {
+                await fetchArt(params.get('title'), '');
+            }
+
+        } else {
+            await fetchLatestArt(32);
+        }
+        return;
+    }
+
     useEffect(() => {
-        fetchLatestArt(32);        
+        fetchOnLoad();        
     }, []);
         
     function createObserver() {
@@ -131,7 +152,7 @@ function App() {
                     <nav className="navbar">
                         <a className="navbar-item" 
                             href="https://github.com/Technic-bot/ArtVault">Github</a>
-                        <a className="navbar-item" href="./about">About</a>
+                        <a className="navbar-item" href="./about.html">About</a>
                     </nav>
                 </div>
             </div>
