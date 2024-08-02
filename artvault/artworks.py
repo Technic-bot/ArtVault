@@ -11,7 +11,7 @@ bp = Blueprint('artworks', __name__, url_prefix='/artworks')
 
 # Filter has an AND clause valid after inner join
 gen_sql = ('SELECT tags.id, title, description, count(tags.id) n, '
-           'filename, date, patreon_url FROM patreon '
+           'filename, date, src_url FROM patreon '
            'INNER JOIN tags ON patreon.id = tags.id '
            '{filter} '
            'WHERE ( ? = null OR lower(tag) IN ({questions}) ) '
@@ -33,7 +33,7 @@ def latest_artworks():
 def get_latest_artworks(limit):
     db = get_db()
     sql_stmt = ('SELECT id, title, description, '
-                'filename, date, patreon_url FROM patreon '
+                'filename, date, src_url FROM patreon '
                 'ORDER BY date DESC LIMIT ?;')
     rows = db.execute(sql_stmt, (limit, )).fetchall()
     return rows
@@ -91,7 +91,7 @@ def build_response(rows):
 
 
 def make_dict(row):
-    cols = ['id', 'title', 'description', 'filename', 'date', 'patreon_url']
+    cols = ['id', 'title', 'description', 'filename', 'date', 'src_url']
     dic_row = {col: row[col] for col in cols}
     return dic_row
 
@@ -135,7 +135,7 @@ def search_title(title, tags='', sort_order='desc'):
     else:
         # Static query with short circuiting
         sql_stmt = ("SELECT id, title, description, "
-                    "filename, date, patreon_url "
+                    "filename, date, src_url "
                     "FROM patreon WHERE "
                     "(? = null OR title like ?) "
                     f" ORDER by date {sort_order}")
@@ -154,7 +154,7 @@ def search_filename(filename, tags='', sort_order='desc'):
     else:
         # Static query with short circuiting
         sql_stmt = ("SELECT id, title, description, "
-                    "filename, date, patreon_url "
+                    "filename, date, src_url "
                     "FROM patreon WHERE "
                     "(? = null OR filename like ?) "
                     f" ORDER by date {sort_order}")

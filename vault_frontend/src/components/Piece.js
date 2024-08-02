@@ -14,7 +14,7 @@ export default function Piece(props) {
             <div className='columns'>
                 <div className='column has-text-centered'>
                     <figure className='is-inline-block'>
-                        <a href={props.patreon_url}>
+                        <a href={props.src_url}>
                             <img className='image is-64x64' 
                                 src={patreon_logo} alt="Patreon source" />
                         </a>
