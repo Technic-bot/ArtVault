@@ -133,7 +133,7 @@ function App() {
             title={piece.title}
             url={piece.url}
             thumbnail={piece.thumbnail}
-            patreon_url={piece.src_url}
+            src_url={piece.src_url}
             date={piece.date}
         />
     ));
