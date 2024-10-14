@@ -7,7 +7,6 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
             margin: 0;
             padding: 0;
         }
@@ -29,13 +28,30 @@
 <body>
     <div class="container">
         <h1>About this Vault:</h1>
-        <p>Err this page is under construction!</p>
-        <p>You should have a brief description of how to use my gallery and whatnot but i have not written that part...</p>
-        <p>In the meantime you can check the github:</p> <a href=https://github.com/Technic-bot/ArtVault > Gallery </a>
-        <p>And the scrapper that powers it</p><a href=https://github.com/Technic-bot/ArtVault> Gallery </a>
+        <p>This Vault is meant to archive and display official art mady by Tom Fischbach mostly related to his comic <a href=https://twokinds.keenspot.com/>Twokinds</a>. 
+        It also provides some quality of life features such as the ability to search by title and by tags and order results by date <p>
+        <p>This work was inspired by the <a href=https://twokinds.gallery/> Twokinds Gallery by Illiar </a> which also hosts Tom official patreon pieces and also some fan art</p>
+        <h2> Sources and code </h2>
+       <p>In case you are interested this gallery is free and open source and you could probably use it for most art. Feel free to check the github page for it: <a href=https://github.com/Technic-bot/ArtVault > ArtVault Gallery. </a> Feel free to contribute or raise issues. The scrapper that powers the gallery is also open source, so you are welcome to check it out, use it fork it or whatever:<a href=https://github.com/Technic-bot/PyPatreonHaverster > Scrapper.</a> I built it mostly to download Tom patreon sketches but you should be able to adapt it to any other patreon artist you follow withouth much issue</p>
+       <h2> Usage, tips and help </h2>
+       <p> This was built with simplicity in mind both in its construction and in its usage. You got two text boxes one allows you to search by Title name and the other by tags. You can also select to order the results by date either descending or ascending. Just hit query once you are ready and the system should fetch the results for you. 
+       Page is designed to load all the results as you scroll down but there is also a button for force rendering more pieces in case it bugs out.</p>
+       <p> For example if you want to search for art pieces which contain the words Good Morning in the title you simply type this on the first textbox </p>
+        <code>
+            Good Morning
+        </code>
+        <p> If on top of that you want to refine to find all the instances of Good Morning sketches with Flora just add the tag for the second textbox
+        </p>
+        <code>
+            Flora
+        </code>
+        <p> Tags can be added to the second box by separating them with a comma, for example, to search for all pieces tagged with Keith and Natani input the following in the tags textbox: </p>
+        <code> Keith, Natani </code>
+        <p>Both searches are case insensitive so do not worry about that. For a comprehensive list of all tags consult patreon: <a href=https://www.patreon.com/twokinds/collections> Collections tab on Tom page </a> </p>
+        <p>Results show a small preview of the image, if you click it you can get a shareable link at full resolution and the PAtreon logo will take you to the source </p>
         <p>And.... have an image of tec!</p><a href=https://schleepcomms.carrd.co> By Schleep </a>
         <div class="image-container">
-            <img src="tec_prof.png" alt="Tec!">
+            <img src="artworks/tec_prof.png" alt="Tec!">
         </div>
     </div>
 </body>
