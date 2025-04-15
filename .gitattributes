@@ -5,3 +5,4 @@ data/stable/* filter=lfs diff=lfs merge=lfs -text
 artvault/db/twokinds_patreon filter=lfs diff=lfs merge=lfs -text
 artvault/db/twokinds_patreon_dev.db filter=lfs diff=lfs merge=lfs -text
 data/dev/twokinds_patreon.json filter=lfs diff=lfs merge=lfs -text
+artvault/db/twokinds_patreon.db.bkp filter=lfs diff=lfs merge=lfs -text
