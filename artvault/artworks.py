@@ -10,7 +10,7 @@ bp = Blueprint('artworks', __name__, url_prefix='/artworks')
 #  and filename, title, description on the same query?
 
 # Filter has an AND clause valid after inner join
-gen_sql = ('SELECT tags.id, title, description, count(tags.tag) n, '
+gen_sql = ('SELECT tags.id, title, description, count(distinct tags.tag) n, '
            'filename, date, src_url FROM patreon '
            'INNER JOIN tags ON patreon.id = tags.id '
            '{filter} '
