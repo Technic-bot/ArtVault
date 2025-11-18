@@ -7,26 +7,30 @@ CREATE TABLE IF NOT EXISTS "patreon_tmp"(
     "description" TEXT,
     "filename" TEXT,
     "type"  TEXT,
-    "patreon_url" TEXT,
-    "date" TEXT
+    "src_url" TEXT,
+    "date" TEXT,
+    unique(id, filename)
 );
 
 CREATE TABLE IF NOT EXISTS "tags_tmp"(
     "id" INTEGER,
-    "tag" TEXT
+    "tag" TEXT,
+    unique(id, tag)
 );
 
 
 INSERT INTO patreon_tmp 
-    (id, title, description, filename, type, patreon_url, date)
-    SELECT id, title, description, filename, type, patreon_url, date from patreon;
+    (id, title, description, filename, type, src_url, date)
+    SELECT id, title, description, filename, type, src_url, date from patreon;
 
 INSERT INTO tags_tmp
     (id, tag) 
     SELECT id, tag from tags;
 
-ALTER TABLE patreon RENAME to patreon_bkp;
-ALTER TABLE patreon_tmp RENAME to patreon;
+-- ALTER TABLE patreon RENAME to patreon_orig;
+-- DROP TABLE patreon;
+-- ALTER TABLE patreon_tmp RENAME to patreon;
 
-ALTER TABLE tags RENAME to tags_bkp;
-ALTER TABLE tags_tmp RENAME to tags;
+-- ALTER TABLE tags RENAME to tags_orig;
+-- DROP TABLE tags;
+-- ALTER TABLE tags_tmp RENAME to tags;
