@@ -20,6 +20,8 @@ class ManualUpdater():
         """ 
         Read existing indices on db, to make sure we are not inserting
         the same post twice
+
+        Not needed if using the unique constraints
         """
         conn = sqlite3.connect(self.file)
         conn.row_factory = sqlite3.Row
@@ -40,15 +42,11 @@ class ManualUpdater():
         """
         self.posts = [] 
         self.tags = []
-        repeats = 0
         print(f"Reading {filename}")
         with open(filename, 'r') as in_file:
             reader = csv.DictReader(in_file)
             for row in reader:
                 post_id = int(row['id'])
-                if post_id in self.index:
-                    repeats += 1
-                    continue
                 tup = ( 
                     self.make_tuple(row)
                 )
@@ -60,8 +58,20 @@ class ManualUpdater():
                     self.tags.append(tag_tup)
         print(f"Found {len(self.posts)} posts")
         print(f"Found {len(self.tags)} individual tags")
-        print(f"Found {repeats} existing entries on db")
         return
+
+    def count_entries(self):
+        """ 
+            Get numbers of post on db
+        """
+        conn = sqlite3.connect(self.file)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        sql_stmt = "SELECT count(id) as cuenta FROM PATREON;"
+        row = cursor.execute(sql_stmt).fetchone()
+        conn.close()
+
+        return int(row['cuenta'])
 
     def make_tuple(self, row):
         """ Turn row dict into tuple """ 
@@ -100,6 +110,11 @@ class ManualUpdater():
 if __name__=="__main__":
     opts = proc_opts()
     updater = ManualUpdater(opts.db)    
-    updater.read_index()
     updater.read_input(opts.input)
+    before = updater.count_entries()
     updater.persist()
+    after = updater.count_entries()
+    print(f"Post in {opts.db}")
+    print(f"Post before: {before}")
+    print(f"Post after: {after}")
+    print(f"{after-before} posts added")
